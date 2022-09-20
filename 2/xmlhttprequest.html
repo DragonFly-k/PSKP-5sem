@@ -1,0 +1,15 @@
+<html>
+
+<head></head>
+
+<body></body>
+<script>
+    var x = new XMLHttpRequest();
+    x.open("GET", "/api/name", true);
+    x.onload = () => {
+        document.body.innerHTML += x.responseText;
+    }
+    x.send(null);
+</script>
+
+</html>

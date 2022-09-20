@@ -1,0 +1,11 @@
+<html>
+
+<head></head>
+
+<body></body>
+<script>
+    let url = 'http://localhost:5000/api/name';
+    fetch(url).then(r => r.text()).then(data => document.body.innerHTML += data);
+</script>
+
+</html>
