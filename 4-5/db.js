@@ -1,5 +1,5 @@
-const util = require('util');   // inherits
-const ee = require('events');   // EventEmitter
+const util = require('util');  
+const ee = require('events'); 
 
 let db_data = [
     { id: 1, name: 'Katty', bday: '20-04-2003' },
@@ -9,8 +9,8 @@ let db_data = [
 ];
 
 function DB() {
-    this.get = () => {return db_data;};   //реализация GET
-    this.post = row => {db_data.push(row);};  //реализация POST
+    this.get = () => {return db_data;}; 
+    this.post = row => {db_data.push(row);}; 
     this.delete = row => {
         let ind = db_data.findIndex(item => item.id == row);
         let data = db_data[ind];
@@ -22,7 +22,8 @@ function DB() {
         let ind = db_data.findIndex(item => item.id == row.id);
         return db_data.splice(ind, 1, row);
     }
+    this.commit = () => {}
 }
 
-util.inherits(DB, ee.EventEmitter); //DB наследует EventEmmiter
-exports.DB = DB;  //экспортируется объект DB
+util.inherits(DB, ee.EventEmitter);
+exports.DB = DB;

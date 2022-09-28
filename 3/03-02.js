@@ -10,9 +10,7 @@ const server = http.createServer(function (request, response) {
     let rc = JSON.stringify({ k : 0 });
     if (url.parse(request.url).pathname === '/fact') {
         console.log(request.url);
-
         var k = url.parse(request.url, true).query.k;
-
         if (k.toString() == "x") {
             fs.readFile("./03-03.html", (err, data) => {
                 response.end(data);
