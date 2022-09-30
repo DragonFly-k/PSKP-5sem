@@ -3,19 +3,18 @@
 <head>
     <style type="text/css">
         * {
-            color: #011627;
-            background-color: #f5f5f5;
+            color: black;
             text-align: center;
             font-size: 14pt;
-            margin-top: 5px;
+            margin-top: 5px; 
         }
-
         button {
             background-color: lavender;
             padding: 8px 15px;
             font-size: 14pt;
-            border-radius: 5px;
+            border-radius: 5px; 
         }
+        
     </style>
 </head>
 
@@ -70,8 +69,8 @@
         function Post() {
             console.log('POST');
             fetch('http://localhost:5000/api/db', {
-                    method: 'POST',
-                    mode: 'no-cors',
+                    method: 'POST', 
+                    mode: 'no-cors',                   
                     headers: {
                         'Content-type': 'application/json',
                         'Accept': 'application/json'
@@ -119,7 +118,7 @@
                         'Accept': 'application/json'
                     },
                     body: JSON.stringify({
-                        id: parseInt(ID.value, 10)
+                        id: ID.value
                     })
                 }).then(response => {
                     return response.json();
@@ -127,7 +126,7 @@
                 .then((pdata) => {
                     console.log('DELETE.pdata', pdata);
                 })
-        }
+    } 
     </script>
 
 </body>

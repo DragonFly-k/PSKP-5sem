@@ -27,9 +27,8 @@ db.on('DELETE', (request, response) => {
     request.on('data', data => 
     {
         let row = JSON.parse(data);
-        let deleteObj = db.delete(row.id);
-        console.log(deleteObj);
-        response.end(JSON.stringify(deleteObj));
+        console.log(db.delete(row.id));
+        response.end(JSON.stringify(db.delete(row.id)));
     });
 });
 db.on('PUT', (request, response) => {
@@ -83,7 +82,7 @@ process.stdin.on('readable', () => {
                 timerSd = setTimeout(() =>  { 
                 server.close()}, sec * 1000);
             }
-            else if(!sec) {
+            else if(!sec && command.trim().length > 2) {
                 console.error("ERROR: parameter not integer");
             }
             else if(command.trim().length === 2) {
@@ -99,7 +98,7 @@ process.stdin.on('readable', () => {
                 db.emit('COMMIT')}, sec*1000);
                 timerSc.unref();
             }
-            else if(!sec) {
+            else if(!sec && command.trim().length > 2) {
                 console.error("ERROR: parameter not integer");
             }
             else if(command.trim().length === 2) {
@@ -118,7 +117,7 @@ process.stdin.on('readable', () => {
                 }, sec * 1000);
                 timerSs.unref();
             }
-            else if(!sec) {
+            else if(!sec && command.trim().length > 2) {
                 console.error("ERROR: parameter not integer");
             }
             else if(command.trim().length === 2) {

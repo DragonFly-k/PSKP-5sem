@@ -10,19 +10,22 @@ let db_data = [
 
 function DB() {
     this.get = () => {return db_data;}; 
-    this.post = row => {db_data.push(row);}; 
+    this.post = row => {
+        let ind = db_data.findIndex(item => item.id == row.id);
+        ind  == -1 ? db_data.push(row) : null;
+        return db_data;
+    };
     this.delete = row => {
         let ind = db_data.findIndex(item => item.id == row);
-        let data = db_data[ind];
-        db_data.splice(ind, 1);
-        console.log(ind);
-        return data;
+        ind != -1 ? db_data.splice(ind, 1):null;
+        return db_data;
     };
     this.put = row => {
         let ind = db_data.findIndex(item => item.id == row.id);
-        return db_data.splice(ind, 1, row);
-    }
-    this.commit = () => {}
+        ind != -1 ? db_data.splice(ind, 1, row) : null;
+        return db_data;
+    };
+    this.commit = () => {};
 }
 
 util.inherits(DB, ee.EventEmitter);
