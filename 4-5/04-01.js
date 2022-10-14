@@ -4,11 +4,11 @@ var fs = require('fs');
 var data = require('./db.js');
 var db = new data.DB();
 
-process.stdin.unref();
 let countRequest = 0, countCommit = 0;
 let timerSd = null, timerSc = null, timerSs = null;
 let startTime = null, endTime = null;
 
+process.stdin.unref();
 db.on('GET', (request, response) => {
     console.log('GET');
     response.end(JSON.stringify(db.get()));
@@ -55,6 +55,7 @@ let server = http.createServer(function (request, response) {
     }
     else if (url.parse(request.url).pathname === '/api/db')
     {
+        countRequest++;
         db.emit(request.method, request, response);
     }
     else if(url.parse(request.url).pathname === '/api/ss') {
@@ -66,21 +67,27 @@ let server = http.createServer(function (request, response) {
 console.log('http://localhost:5000\n'+'http://localhost:5000/api/db\n'+'http://localhost:5000/api/ss');
 
 function getStats() {
-	return { start: startTime, end: endTime, 
-        requests: countRequest, commits: countCommit };
+	return { start: startTime, end: endTime, requests: countRequest, commits: countCommit };
 }
 
 process.stdin.setEncoding('utf-8');
+process.stdin.unref();
+// server.on('connection', (socket) => socket.unref());
 process.stdin.on('readable', () => {
     let command = null;
     while ((command = process.stdin.read()) != null) {
         if (command.trim().startsWith('sd')) {
             let sec = Number(command.trim().replace(/[^\d]/g, ''));
             if(sec) {
-                console.log(`Server will close in ${sec} sec`);
                 clearTimeout(timerSd);
-                timerSd = setTimeout(() =>  { 
-                server.close()}, sec * 1000);
+                timerSd = setTimeout(() =>  {
+                process.stdin.unref();
+                //clearInterval(timerSc);
+                //clearTimeout(timerSs);
+                server.close();
+                console.log(`Server close`);
+                process.exit(0);
+                }, sec * 1000);
             }
             else if(!sec && command.trim().length > 2) {
                 console.error("ERROR: parameter not integer");
