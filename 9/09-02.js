@@ -3,9 +3,9 @@ const query = require('querystring');
 const url = require('url');
 
 http.createServer(function(request, response) {
-    let parsedQ = url.parse(request.url, true).query;
     response.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'});
-    response.end('x = '+parsedQ.x +'; y = ' +parsedQ.y );
+    response.end('x = '+url.parse(request.url, true).query.x 
+                +'; y = ' +url.parse(request.url, true).query.y );
 }).listen(5000);
 
 let parameters = query.stringify({x: 2, y: 8});

@@ -3,13 +3,11 @@ const query = require('querystring');
 const url = require('url');
 
 http.createServer(function(request, response) {
-    let parsedQ;
     let data = '';
     request.on('data', chunk => {data += chunk.toString();})
     request.on('end', () => {
-    parsedQ = JSON.parse(data);
     response.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'});
-    response.end('x = '+parsedQ.x+'; y = '+ parsedQ.y+'; s = '+parsedQ.s);
+    response.end('x = '+JSON.parse(data).x+'; y = '+ JSON.parse(data).y+'; s = '+JSON.parse(data).s);
     });
 }).listen(5000);
 

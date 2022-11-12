@@ -37,9 +37,9 @@ let http_handler=(req,res)=>
 			if(q['set']!=null)
 			{
 				server.keepAliveTimeout= +q['set'];
-				res.end('New value of KeepAliveTimeout: ' +server.keepAliveTimeout.toString());
+				res.end('New value of KeepAliveTimeout: ' +server.keepAliveTimeout);
 			}
-			else res.end('KeepAliveTimeout:'+server.keepAliveTimeout.toString());
+			else res.end('KeepAliveTimeout:'+server.keepAliveTimeout);
 		}
 		else if(url.parse(req.url).pathname === '/headers'){
 			res.setHeader('X-author','Katty');
@@ -65,20 +65,19 @@ let http_handler=(req,res)=>
 		else if(url.parse(req.url).pathname.search('\/parameter\/[a-zA-Z1-9]+\/[a-zA-Z1-9]+$')!=(-1))
 		{
 			res.writeHead(200,{'Content-Type': 'text/html;charset=utf-8'});
-			let p = url.parse(req.url,true);
-			let r =decodeURI(p.pathname).split('/');
+			let r =url.parse(req.url,true).pathname.split('/');
 			let x=+r[2];
 			let y=+r[3];
 			if(!isNaN(x) && !isNaN(y))
 			{
-			let result='';
-			result+='x+y='+(x+y)+'\n';
-			result+='x-y='+(x-y)+'\n';
-			result+='x*y='+(x*y)+'\n';
-			result+='x/y='+(x/y)+'\n';
-			res.end(result);
+				let result='';
+			    result+='x+y='+(x+y)+'\n';
+			    result+='x-y='+(x-y)+'\n';
+			    result+='x*y='+(x*y)+'\n';
+			    result+='x/y='+(x/y)+'\n';
+			    res.end(result);
 			}
-			else res.end(p.pathname);
+			else res.end(url.parse(req.url,true).pathname);
 		}
 		else if(url.parse(req.url).pathname=== '/close')
 		{
@@ -91,8 +90,8 @@ let http_handler=(req,res)=>
 			res.writeHead(200,{'Content-Type': 'text/html;charset=utf-8'});
 			res.write('Port Client:'+res.socket.remotePort+'<br\/>');
 			res.write('IP Client:'+res.socket.remoteAddress+'<br\/>');
-			res.write('Port Server:'+req.socket.remotePort+'<br\/>');
-			res.end('Address Server'+req.socket.remoteAddress+'<br\/>');
+			res.write('Port Server:'+req.socket.localPort+'<br\/>');
+			res.end('Address Server'+req.socket.localAddress+'<br\/>');
 		}
 		else if(url.parse(req.url).pathname=== '/req-data')
 		{
@@ -142,10 +141,11 @@ let http_handler=(req,res)=>
 	}
 	else if(req.method=='POST'){
 		if(url.parse(req.url).pathname=== '/formparameter')
-		{   res.writeHead(200, {'Content-Type': 'text/plain'});
-        let data = '';
-        req.on('data', chunk => { data += chunk; });
-        req.on('end', () => {res.end(data);});
+		{   
+			res.writeHead(200, {'Content-Type': 'text/plain'});
+            let data = '';
+            req.on('data', chunk => { data += chunk; });
+            req.on('end', () => {res.end(data);});
 		}
 		else if(url.parse(req.url).pathname=== '/json')
 		{
@@ -187,9 +187,7 @@ let http_handler=(req,res)=>
 			{
 				let result='';
 				let form =new mp.Form({uploadDir:'./static'});
-				form.on('field',(name,value)=>{
-					result+=`${name}= ${value}<br/>`;
-				});
+				form.on('field',(name,value)=>{result+=`${name}= ${value}<br/>`;});
 				form.on('file', (name, file)=>{
 					result+=`${name}= ${file.originalFilename}: ${file.path}<br/>`;
 				});
@@ -212,7 +210,7 @@ let http_handler=(req,res)=>
 var server=http.createServer(function (req, res){
     http_handler(req,res);}).listen(5000, () => {
     console.log("http://localhost:5000/connection");
-    console.log("http://localhost:5000/connection?set=555586");
+    console.log("http://localhost:5000/connection?set=2000");
     console.log("http://localhost:5000/headers");
     console.log("http://localhost:5000/parameter?x=15&&y=5");
     console.log("http://localhost:5000/parameter/15/5");
