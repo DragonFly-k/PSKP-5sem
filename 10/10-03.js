@@ -1,6 +1,6 @@
 const WebSocket = require("ws");
-
 const wss = new WebSocket.Server({port: 4000, host: "localhost", path: "/broadcast"});
+
 wss.on("connection", ws => {
     console.log("Connected");
     ws.on("message", message => {

@@ -1,52 +1,29 @@
-const fs = require('fs');
-const url = require('url');
+const url = require('url')
+const fs = require('fs')
+const path = 'StudentList.json'
 
-const errHandler = require('./errorHandler');
-const readFile = require('./readFile');
-const pathToFile = './file/StudentList.json';
+module.exports = (req, res) =>{
+    let urll= url.parse(req.url).pathname
 
-module.exports = (request, response) => {
-    let path = url.parse(request.url).pathname;
-    if(path === '/') {
-        let body = '';
-        request.on('data', function (data) {
-            body += data;
-        });
-        request.on('end', function () {
-            let fileJSON = JSON.parse(readFile());
-            let flag = true;
-            fileJSON.forEach(item => {
-                if(item.id === JSON.parse(body).id) {
-                    flag = false;
+    switch (urll) {
+        case '/':
+            req.on('data', (data) => {
+                let student = JSON.parse(data)
+                let students = JSON.parse(fs.readFileSync(path).toString())
+                let index = students.findIndex((x) => x.id === student.id)
+                if (index === -1) { 
+                    res.end( JSON.stringify({"error": 2, "message": "Студент с id равным "+ student.id+ " не найден"}) )
+                    return
                 }
-            });
-            if(!flag){
-            for(let i = 0; i < fileJSON.length; i++) {
-                if (fileJSON[i].id === JSON.parse(body).id) {
-                    fileJSON[i] = JSON.parse(body);
-                    fs.writeFile(pathToFile, JSON.stringify(fileJSON), (e) => {
-                        if (e) {
-                            console.log('ERROR');
-                            errHandler(request, response, e.code, e.message);
-                        }
-                        else {
-                            flag = true;
-                            console.log('changed');
-                            response.writeHead(200, {'Content-Type': 'application/json; charset=utf-8'});
-                            response.end(JSON.stringify(JSON.parse(body)));
-                        }
-                    });
-
-                }
-            }
-            }
-            else {
-                errHandler(request, response, 1, `Student id ${JSON.parse(body).id} doesnt exist`);
-            }
-        });
-    }
-    else{
-        response.writeHead(404, {'Content-Type': 'application/json; charset=utf-8'});
-        response.end(`error 404`);
+                students[index] = student
+                fs.writeFileSync(path, JSON.stringify(students))
+                res.writeHead(200, {'Content-Type': 'application/json; charset=utf-8',})
+                res.end(JSON.stringify(student, null, '\t'))
+            })
+            break;
+        default:
+            res.writeHead(404)
+            res.end()
+            break;
     }
 };

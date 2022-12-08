@@ -8,28 +8,29 @@ http.createServer(function(req, res) {
     req.on('end', () => {
         res.writeHead(200, {'Content-type': 'text/xml'});
         parseString(data, function(err, result) {
-            let xSum = 0;
-            let mSum = '';
+            let xSum = 0; let mSum = '';
+            id=result.request.$.id;
             result.request.x.forEach((p) => {
-                xSum += parseInt(p.$.value);
+                xSum += (+p.$.value);
             });
             result.request.m.forEach((p) => {
                 mSum += p.$.value;
             });
-            console.log(mSum);
-            let xmlDoc = xmlbuilder.create('response').att('id', '67');
-            xmlDoc.ele('sum').att('result', xSum).up().ele('concat').att('result', mSum);
-            res.end(xmlDoc.toString({ pretty: true }));
+            let xmlDoc = xmlbuilder.create('response').att('id', id);
+            xmlDoc.ele('sum').att('result', xSum);
+            xmlDoc.ele('concat').att('result', mSum);
+            res.end(xmlDoc.toString());
         });
     });
 }).listen(5000);
 
-let parameters = xmlbuilder.create('request').att('id', '28');
-parameters.ele('x').att('value', '1').up()
-        .ele('x').att('value', '2').up()
-        .ele('m').att('value', 'a').up()
-        .ele('m').att('value', 'b').up()
-        .ele('m').att('value', 'c').up();
+let parameters = xmlbuilder.create('request').att('id', '19')
+.ele('x').att('value', '1').up()
+.ele('x').att('value', '2').up()
+.ele('x').att('value', '3').up()
+.ele('m').att('value', 'a').up()
+.ele('m').att('value', 'b').up()
+.ele('m').att('value', 'c').up();
 
 let options = {
     host: 'localhost',
@@ -37,23 +38,15 @@ let options = {
     port: 5000,
     method: 'POST',
     headers: {
-        'content-type':'text/xml', 
-        'accept':'text/xml'
+        'content-type':'text/xml', 'accept':'text/xml'
     }
 };
 
 let req = http.request(options, (res) => {
     console.log('status code:', res.statusCode);
-
     let responseData = '';
-    res.on('data', (chunk) => {
-        responseData += chunk;
-    });
-    res.on('end', () => {
-        console.log('body=', responseData);
-            parseString(responseData, (err, str) => {
-                if(err) {console.log('xml parser error');}
-            });
-    });
+    res.on('data', (chunk) => {responseData += chunk;});
+    res.on('end', () => {console.log('body: ', responseData);});
 });
-req.end(parameters.toString({pretty:true}));
+
+req.end(parameters.toString());

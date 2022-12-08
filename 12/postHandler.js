@@ -1,69 +1,39 @@
-const fs = require('fs');
-const url = require('url');
+const url = require('url')
+const fs = require('fs')
+const path = 'StudentList.json'
 
-const errHandler = require('./errorHandler');
-const readFile = require('./readFile');
-const pathToFile = './file/StudentList.json';
+module.exports = (req, res) =>{
+    let urll= url.parse(req.url).pathname
 
-module.exports = (request, response) => {
-    let path = url.parse(request.url).pathname;
-    if(path === '/') {
-            let body = '';
-            request.on('data', function (data) {
-                body += data;
-            });
-            request.on('end', function () {
-                let flag = true;
-                let fileJSON = JSON.parse(readFile());
-                fileJSON.forEach(item => {
-                    if(item.id === JSON.parse(body).id) {
-                        flag = false;
-                    }
-                });
-                if(flag) {
-                    fileJSON.push(JSON.parse(body));
-                    fs.writeFile(pathToFile, JSON.stringify(fileJSON), (e) => {
-                        if (e) {
-                            console.log('Error');
-                            errHandler(request, response, e.code, e.message);
-                        }
-                        else {
-                            console.log('added');
-                            response.writeHead(200, {'Content-Type': 'application/json; charset=utf-8'});
-                            response.end(JSON.stringify(JSON.parse(body)));
-                        }
-                    });
+    switch (urll) {
+        case '/':
+            req.on('data', (data) => {
+                let student = JSON.parse(data)
+                let students = JSON.parse(fs.readFileSync(path).toString())
+                let check = students.filter((item) => { return item.id === student.id})
+                if (check.length > 0) {
+                    res.writeHead(400)
+                    res.end( JSON.stringify({"error": 3, "message": "Студент с id равным "+student.id+ " уже есть"}) )
+                    return
                 }
-                else {
-                    errHandler(request, response, 2, `Sudent id  ${JSON.parse(body).id} doesnt exist`);
-                }
-            });
-    }
-    else if(path === '/backup') {
-        let date = new Date();
-        let month = date.getMonth() + 1;
-        if(Number(month) < 10)
-        {
-            month = '0' + month;
-        }
-        let day = date.getDate()
-        if(Number(day) < 10)
-        {
-            day = '0' + day;
-        }
-        fs.copyFile(pathToFile, `./backup/${date.getFullYear()}${month}${day}${date.getHours()}${date.getMinutes()}_StudentList.json`, (err) => {
-            if (err) {
-                console.log('Error');
-                errHandler(request, response, err.code, err.message);
+                students.push(student)
+                fs.writeFileSync(path, JSON.stringify(students))
+                res.writeHead(200, {'Content-Type': 'application/json; charset=utf-8',})
+                res.end(data)
+            })
+            break;
+        case '/backup':
+            let date = new Date()
+            let result = date.toISOString().match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):\d{2}:(\d{2}).+$/)
+            let newPath = `${result[1]}${result[2]}${result[3]}${result[4]}${result[5]}_${path}`
+            if (fs.existsSync(newPath)) {
+                res.end('file already exists')
+                break;
             }
-            else {
-                console.log('copy');
-                response.end('copy');
-            }
-        });
-    }
-    else{
-        response.writeHead(404, {'Content-Type': 'application/json; charset=utf-8'});
-        response.end(`error 404`);
+            setTimeout(() => {
+                fs.copyFileSync(path, newPath)
+                res.end('OK')
+            }, 2000)
+            break;
     }
 };

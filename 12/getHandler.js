@@ -1,51 +1,43 @@
-const url = require('url');
-const fs = require('fs');
+const url = require('url')
+const fs = require('fs')
+const path = 'StudentList.json'
 
-const errorHandler = require('./errorHandler');
-const readFile = require('./readFile');
+module.exports = (req, res) =>{
+    let urll= url.parse(req.url).pathname
 
-module.exports = (request, response) => {
-    let path = url.parse(request.url).pathname;
-    switch(true) {
-        case path === '/': {
-            response.setHeader('Content-Type', 'application/json; charset=utf-8');
-            response.end(readFile());
+    switch (urll) {
+        case '/':
+            let file = fs.readFileSync(path)
+            let students = JSON.parse(file.toString())
+            res.writeHead(200, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify(students, null, '\t'))
             break;
-        }
-        case /\/\d+/.test(path): {
-            let fileJSON = readFile();
-            let id = Number(path.match(/\d+/)[0]);
-            JSON.parse(fileJSON).forEach(item => {
-                if(item.id === id) {
-                    response.setHeader('Content-Type', 'application/json');
-                    response.write(JSON.stringify(item));
+        case '/backup':
+            fs.readdir(__dirname, (err, files) => {
+                if (err) console.error(err)
+                files.forEach((file) => {
+                    let backup = file.match(/^\d{12}_StudentList.json$/)
+                    if (backup)  res.write(backup[0] + '\n')
+                })
+                res.end()
+            })
+            break;
+        default:
+            if (urll.match(/\/(\d+)$/)) {
+                let file = fs.readFileSync(path)
+                let students = JSON.parse(file.toString())
+                let student = students.filter((student) => {return student.id === Number(urll.match(/\/(\d+)$/)[1])})
+                if (student.length === 0) {
+                    res.writeHead(404)
+                    res.end( JSON.stringify({"error": 2, "message": "Студент с id равным "+urll.match(/^\/(\d+)$/)[1]+ " не найден"}) )
+                    break;
                 }
-            });
-            if(!response.hasHeader('Content-Type')) {
-                errorHandler(request, response, 1, ` id ${id} `);
-            }
-            response.end();
-            break;
-        }
-        case path === '/backup': {
-            fs.readdir('./backup', (err, files) => {
-                response.setHeader('Content-Type', 'application/json');
-                let json = [];
-                for (let i = 0; i < files.length; i++) {
-                    json.push({
-                        id: i,
-                        name: files[i]
-                    });
-                }
-                response.end(JSON.stringify(json));
-                console.log(files.length);
-            });
-            break;
-        }
-        default :{
-                response.writeHead(404, {'Content-Type': 'application/json; charset=utf-8'});
-                response.end(`error 404`);
+                res.writeHead(200, {'Content-Type': 'application/json; charset=utf-8',})
+                res.end(JSON.stringify(student))
                 break;
-        }
+            }
+            res.writeHead(404)
+            res.end('ERROR')
+            break;
     }
 };

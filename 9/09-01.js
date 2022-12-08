@@ -13,6 +13,7 @@ let options= {
     port: 5000,
     method:'GET'
 }
+
 const req = http.request(options,(res)=> {
     console.log('Response status: ' + res.statusCode + '\nStatus message: '+ res.statusMessage);
     console.log('Server IP: '+ res.socket.remoteAddress +'\nServer port: '+res.socket.remotePort);

@@ -24,7 +24,6 @@ let parameters = JSON.stringify({
     "m":["a","b","c","d"],
     "o":{"surname":"Syatkouskaya", "name":"Kate"}
 });
-console.log('params: ',parameters);
 
 let options = {
     host: 'localhost',
@@ -32,8 +31,7 @@ let options = {
     port: 5000,
     method: 'POST',
     headers: {
-        'content-type' : 'appliation/json', 
-        'accept' : 'application/json'
+        'content-type' : 'appliation/json', 'accept' : 'application/json'
     }
 };
 
@@ -41,10 +39,7 @@ let request = http.request(options, (res) => {
     console.log('Response status:', res.statusCode);
     let data= '';
     res.on('data', (chunk) => {data += chunk.toString('utf8');});
-    res.on('end', () => {
-        console.log('body: '+data);
-        console.log('parsed:', JSON.parse(data));
-    })
+    res.on('end', () => {console.log('body:', JSON.parse(data));})
 });
 
 request.end(parameters);

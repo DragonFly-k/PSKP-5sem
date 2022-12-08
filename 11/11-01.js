@@ -4,8 +4,8 @@ const WebSocket = require('ws');
 const wss = new WebSocket.Server({port:4000, host:'localhost'});
 
 let k = 0;
-wss.on('connection', (ws)=>{
+wss.on('connection', (ws)=>{ 
     const duplex = WebSocket.createWebSocketStream(ws, {encoding: 'utf8'});
-    let wfile = fs.createWriteStream(`./upload/${++k}.txt`);
-    duplex.pipe(wfile);
+    let wfile = fs.createWriteStream(`./upload/1-${++k}.txt`);
+    duplex.pipe(wfile); 
 });

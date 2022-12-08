@@ -1,13 +1,21 @@
-const http = require('http');
-const fs = require('fs');
-const websocket = require('ws');
-
-const pathToFile = './file/StudentList.json';
-
+const http = require('http')
+const fs = require('fs')
 const getHandler = require('./getHandler');
 const postHandler = require('./postHandler');
 const putHandler = require('./putHandler');
 const deleteHandler = require('./deleteHandler');
+const path ='./StudentList.json'
+const rpcServer = require('rpc-websockets').Server;
+const rpc = new rpcServer({ port: 4000, host: 'localhost'}); 
+
+rpc.event('change')
+
+fs.watch(path, (event, file) => {
+    if (file) {
+        console.log(`file: ${file}, event = ${event}`)
+        rpc.emit('change')
+    }
+})
 
 http.createServer((request, response) => {
     switch(request.method) {
@@ -17,15 +25,3 @@ http.createServer((request, response) => {
         case 'DELETE': deleteHandler(request, response); break;
     }
 }).listen(5000);
-
-let wss = new websocket.Server({port: 4000, host: 'localhost', path: '/broadcast'});
-
-fs.watch(pathToFile, {encoding: 'buffer'}, (eventType, filename) => {
-    if(eventType === 'change') {
-        wss.clients.forEach((client) => {
-            if (client.readyState === websocket.OPEN) {
-                client.send(`FIle ${filename} changed`);
-            }
-        });
-    }
-});

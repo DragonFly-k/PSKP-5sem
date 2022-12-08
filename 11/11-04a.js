@@ -10,7 +10,7 @@ ws.on('open', ()=>{
         console.log('on message: ', data);
     });
 
-    setInterval(()=>{ ws.send(JSON.stringify({client: prfx, t: new Date().toISOString()})) }, 3000)
+    setInterval(()=>{ ws.send(JSON.stringify({client: prfx, t: new Date().toDateString()})) }, 3000)
 });
 
 ws.on('error', (e)=>{console.log('wss server error', e)});

@@ -3,15 +3,10 @@ const fs = require('fs');
 
 http.createServer(function(request, response) {
     response.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
-    let readableStream = fs.createReadStream('MyFile.png');
-    readableStream.on('end', () => {
-        response.end();
-    });
-
-    readableStream.pipe(response);
+    let read = fs.createReadStream('MyFile.png');
+    read.on('end', () => {response.end();});
+    read.pipe(response);
 }).listen(5000);
-
-let writeableStream = fs.createWriteStream('My2.png');
 
 let options = {
     host: 'localhost',
@@ -20,7 +15,7 @@ let options = {
     method: 'GET'
 };
 
-let req = http.request(options, (res) => {
-    res.pipe(writeableStream);
+let request = http.request(options, (response) => {
+    response.pipe(fs.createWriteStream('Cat.png'));
 });
-req.end();
+request.end();
