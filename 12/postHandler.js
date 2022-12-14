@@ -24,12 +24,15 @@ module.exports = (req, res) =>{
             break;
         case '/backup':
             let date = new Date()
-            let result = date.toISOString().match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):\d{2}:(\d{2}).+$/)
-            let newPath = `${result[1]}${result[2]}${result[3]}${result[4]}${result[5]}_${path}`
-            if (fs.existsSync(newPath)) {
-                res.end('file already exists')
-                break;
-            }
+            let month = date.getMonth() + 1;
+            if(month < 10) month = '0' + month;
+            let day = date.getDate();
+            if(day < 10) day = '0' + day;
+            let hours = date.getHours();
+            if(hours < 10) hours = '0' + hours;
+            let minutes = date.getMinutes();
+            if(minutes < 10) minutes = '0' + minutes;
+            let newPath = `./backup/${date.getFullYear()}${month}${day}${hours}${minutes}_${path}`
             setTimeout(() => {
                 fs.copyFileSync(path, newPath)
                 res.end('OK')

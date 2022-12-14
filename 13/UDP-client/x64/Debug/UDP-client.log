@@ -1,0 +1,6 @@
+﻿  UDP-client.cpp
+D:\универ\Пскп\лабы\13\UDP-client\UDP-client.cpp(92,6): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
+D:\универ\Пскп\лабы\13\UDP-client\UDP-client.cpp(88,18): warning C4101: end: неиспользованная локальная переменная
+D:\универ\Пскп\лабы\13\UDP-client\UDP-client.cpp(88,11): warning C4101: start: неиспользованная локальная переменная
+D:\универ\Пскп\лабы\13\UDP-client\UDP-client.cpp(90,30): warning C4101: countMessage: неиспользованная локальная переменная
+  UDP-client.vcxproj -> D:\универ\Пскп\лабы\13\13\x64\Debug\UDP-client.exe

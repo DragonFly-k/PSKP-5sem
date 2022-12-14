@@ -1,0 +1,3 @@
+﻿  UDP-server.cpp
+D:\универ\Пскп\лабы\13\UDP-server\UDP-server.cpp(107,20): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
+  UDP-server.vcxproj -> D:\универ\Пскп\лабы\13\13\x64\Debug\UDP-server.exe

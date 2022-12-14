@@ -13,14 +13,9 @@ module.exports = (req, res) =>{
             res.end(JSON.stringify(students, null, '\t'))
             break;
         case '/backup':
-            fs.readdir(__dirname, (err, files) => {
-                if (err) console.error(err)
-                files.forEach((file) => {
-                    let backup = file.match(/^\d{12}_StudentList.json$/)
-                    if (backup)  res.write(backup[0] + '\n')
-                })
-                res.end()
-            })
+            let files = fs.readdirSync('./backup')
+            res.writeHead(200, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify(files))
             break;
         default:
             if (urll.match(/\/(\d+)$/)) {

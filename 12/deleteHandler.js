@@ -13,7 +13,7 @@ module.exports = (req, res) =>{
             res.end( JSON.stringify({"error": 2, "message": "Студент с id равным "+urll.match(/^\/(\d+)$/)[1]+ " не найден"}) )
             return
         }
-        let student = students[index]
+        let student = students[index] 
         students.splice(index, 1)
         fs.writeFileSync(path, JSON.stringify(students))
         res.writeHead(200, {'Content-Type': 'application/json; charset=utf-8'})
@@ -24,13 +24,13 @@ module.exports = (req, res) =>{
         let backupPath = urll.match(/^\/backup\/(\d{4})(\d{2})(\d{2})$/);
         let deleteDate = new Date(Number(backupPath[1]), Number(backupPath[2]), Number(backupPath[3]))
 
-        let files = fs.readdirSync(__dirname)
+        let files = fs.readdirSync('./backup')
         files.forEach((file) => {
-            let filePath = file.match( /^(\d{4})(\d{2})(\d{2})\d{4}_StudentList.json$/)
+            let filePath = file.match(/^(\d{4})(\d{2})(\d{2})\d{4}_StudentList.json$/)
             if (filePath) {
-                let my_date = new Date(Number(filePath[1]), Number(filePath[2]), Number(filePath[3]))
-                if (my_date < deleteDate) {
-                    fs.unlinkSync(filePath[0])
+                let date = new Date(Number(filePath[1]), Number(filePath[2]), Number(filePath[3]))
+                if (date < deleteDate) {
+                    fs.unlinkSync('./backup/' + filePath[0])
                     res.write(filePath[0])
                 }
             }

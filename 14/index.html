@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>14-03</title>
+        <style type="text/css">
+            * {
+                color: black;
+                text-align: center;
+                font-size: 14pt;
+                margin-top: 5px;
+            }
+    
+            button {
+                background-color: lavender;
+                padding: 8px 15px;
+                font-size: 14pt;
+                border-radius: 5px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div>
+            <div>
+                <label>pulpit: </label>
+                <input type="text" class="col-3" id="pulpit" />
+            </div><br/>
+            <div style="margin: 0px 0px 0px -50px;">
+                <label>pulpit_name: </label>
+                <input type="text" class="col-3" id="pulpit_name" />
+            </div><br />
+            <div style="margin: 0px 0px 0px -10px;">
+                <label>faculty: </label>
+                <input type="text" class="col-3" id="faculty" />
+            </div>
+            <div>
+                <button onclick="Delete()">DELETE</button>
+                <button onclick="Put()">PUT</button>
+                <button onclick="Post()">POST</button>
+                <button onclick="Get()">GET</button>
+            </div>
+            <div id="result" content=""></div>
+            <br />
+        </div>
+        <script>
+            let result = document.getElementById('result')
+            result.setAttribute('style', 'color: black')
+
+            function Get() {
+                let result = document.getElementById('result')
+                result.setAttribute('style', 'color: black')
+                fetch('/api/pulpits', { method: 'GET',})
+                    .then((response) => response.json())
+                    .then((data) => {result.innerHTML = JSON.stringify(data, null, '\t')})
+                    .catch((error) => {
+                        result.setAttribute('style', 'color: red')
+                        result.innerHTML = error
+                    })
+            }
+
+            function Post() {
+                let pulpit = document.getElementById('pulpit')
+                let pulpit_name = document.getElementById('pulpit_name')
+                let faculty = document.getElementById('faculty')
+                let result = document.getElementById('result')
+                result.setAttribute('style', 'color: black')
+                let data = {
+                    pulpit: pulpit.value,
+                    pulpit_name: pulpit_name.value,
+                    faculty: faculty.value,
+                }
+                fetch('/api/pulpits', {method: 'POST',body: JSON.stringify(data),})
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.error) {throw data.error}
+                        result.innerHTML = JSON.stringify(data, null, '\t')
+                    })
+                    .catch((error) => {
+                        result.setAttribute('style', 'color: red')
+                        result.innerHTML = error
+                    })
+            }
+
+            function Delete() {
+                let pulpit = document.getElementById('pulpit')
+                result.setAttribute('style', 'color: black')
+                fetch(`/api/pulpits/${pulpit.value}`, {method: 'DELETE',})
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.error) {throw data.error}
+                        result.innerHTML = JSON.stringify(data, null, '\t')
+                    })
+                    .catch((error) => {
+                        result.setAttribute('style', 'color: red')
+                        result.innerHTML = error
+                    })
+            }
+
+            function Put() {
+                let pulpit = document.getElementById('pulpit')
+                let pulpit_name = document.getElementById('pulpit_name')
+                let faculty = document.getElementById('faculty')
+                result.setAttribute('style', 'color: black')
+                fetch('/api/pulpits', {
+                    method: 'PUT',
+                    body: JSON.stringify
+                    ({
+                        pulpit: pulpit.value,
+                        pulpit_name: pulpit_name.value,
+                        faculty: faculty.value,
+                    }),
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.error) {throw data.error}
+                        result.innerHTML = JSON.stringify(data, null, '\t')
+                    })
+                    .catch((error) => {
+                        result.setAttribute('style', 'color: red')
+                        result.innerHTML = error
+                    })
+            }
+        </script>
+    </body>
+</html>
