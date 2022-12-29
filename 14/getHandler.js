@@ -1,6 +1,5 @@
 const fs = require('fs')
 const url = require('url')
-const pathStatic = './index.html'
 
 module.exports.get= (request, response, Db) => {
     let path = url.parse(request.url).pathname.split('/')
@@ -89,11 +88,6 @@ module.exports.get= (request, response, Db) => {
             error400(response, 'Invalid method')
             break
     }
-}
-
-let pipeFile = (response, headers) => {
-    response.writeHead(200, headers)
-    fs.createReadStream(pathStatic).pipe(response)
 }
 
 function error400(response, error) {

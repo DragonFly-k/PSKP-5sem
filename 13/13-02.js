@@ -11,3 +11,4 @@ client.on('data', data => {
     client.destroy();
 });
 client.on('close', () => {console.log('Client closed');});
+client.on('error', (err) => { console.log(`${err}`);})

@@ -88,7 +88,7 @@ int main()
         if (bind(sS, (LPSOCKADDR)&serv, sizeof(serv)) == SOCKET_ERROR) {
             throw  SetErrorMsgText("bind: ", WSAGetLastError());
         }
-        if (listen(sS, SOMAXCONN) == SOCKET_ERROR) {
+        if (listen(sS, SOMAXCONN) == SOCKET_ERROR) {  
             throw SetErrorMsgText("listen: ", WSAGetLastError());
         }
         SOCKET cS;
@@ -102,7 +102,8 @@ int main()
                 char message[50] = "";
                 if ((recv(cS, message, sizeof(message), NULL)) == SOCKET_ERROR)
                     throw SetErrorMsgText("recv: ", WSAGetLastError());
-                cout << message;
+                cout << message << endl;
+                int  lobuf = 0;
                 string obuf = "ECHO: " + (string)message;
                 if (strcmp(message, "") == 0) {
                     break;

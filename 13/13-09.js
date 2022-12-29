@@ -6,4 +6,5 @@ server.on('message', (msg, info) => {
     console.log(`${msg}`)
     server.send(`ECHO: ${msg}`, info.port)
 })
+server.on('error', (err) => { console.log(`${err}`);})
 server.bind(PORT)

@@ -1,24 +1,25 @@
 const url = require('url')
 
 module.exports.del = (request, response, Db) => {
-    let path = url.parse(request.url).pathname.split('/')
+    const ur = decodeURI(url.parse(request.url).pathname);
+    let path =ur.split('/');
     switch (path[2]) {
         case 'faculties':
-            response.writeHead(200, { 'Content-Type': 'application/json' })
+            response.writeHead(200, { 'Content-Type': 'text/plain'});
             Db.getFaculty(path[3])
                 .then((records) => {
-                    if (records.recordset.length == 0) {throw 'No such faculty'}
+                    if (records.recordset.length == 0) { throw 'no such faculty';}
                     Db.deleteFaculty(path[3])
-                        .then((records) => {response.end(JSON.stringify(records.recordset[0]))})
-                        .catch((error) => {error400(response, error)})
+                        .then(() => {response.end(JSON.stringify(records.recordset[0]))})
+                        .catch(error => { error400(response,  error)});
                 })
-                .catch((error) => {error400(response, error)})
+                .catch(error => { error400(response,  error)});
             break
 
         case 'pulpits':
-            response.writeHead(200)
+            response.writeHead(200, { 'Content-Type': 'text/plain' })
             Db.getPulpit(path[3])
-                .then((records) => {
+                .then((records) => { 
                     if (records.recordset.length == 0) {throw 'No such pulpit'}
                     Db.deletePulpit(path[3])
                         .then(() => {response.end(JSON.stringify(records.recordset[0]))})
@@ -33,7 +34,7 @@ module.exports.del = (request, response, Db) => {
                 .then((records) => {
                     if (records.recordset.length == 0) {throw 'No such subject'}
                     Db.deleteSubject(path[3])
-                        .then(() => {response.end(JSON.stringify(records.recordset[0]))})
+                        .then(() => {response.end(JSON.stringify(records.recordset[0]))}) 
                         .catch((error) => {error400(response, error)})
                 })
                 .catch((error) => {error400(response, error)})
@@ -63,12 +64,11 @@ module.exports.del = (request, response, Db) => {
                 .catch((error) => {error400(response, error)})
             break
 
-        default:error400(response, 'Invalid method');break;
+        default: error400(response, 'Invalid method');break;
     }
 }
 
 function error400(response, error) {
-    response.statuscode = 400
-    response.statusmessage = 'invalid method'
-    response.end(JSON.stringify({error: error.message}))
+    response.statusCode = 400;
+    response.end(`{"error message": "${error}"}`)
 }

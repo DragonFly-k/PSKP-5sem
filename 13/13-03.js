@@ -4,8 +4,8 @@ let sum = 0
 
 net.createServer((socket) => {
     socket.on('data', (data) => {
-        console.log(`${data}`)
-        sum += Number(data)
+        console.log(`${data.readInt32LE()}`)
+        sum += data.readInt32LE()
     })
     setInterval(() => {
         socket.write(sum.toString())
@@ -13,4 +13,5 @@ net.createServer((socket) => {
     socket.on('close', (data) => {
         console.log('Client disconnected')
     })
+    socket.on('error', (err) => { console.log(`${err}`);})
 }).listen(PORT)

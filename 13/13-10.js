@@ -7,3 +7,4 @@ client.connect(PORT, () => {
 })
 client.on('message', (msg, info) => {console.log(`${msg}`); client.close()})
 client.on('close', () => {console.log('Client closed');});
+client.on('error', (err) => { console.log(`${err}`);})

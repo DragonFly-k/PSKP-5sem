@@ -1,12 +1,11 @@
 const net = require('net')
 
-if (isNaN(process.argv[2])) {process.exit()}
-
+let port = isNaN(process.argv[2]) ? process.exit() : process.argv[2];
 let client = new net.Socket()
-client.connect(Number(process.argv[2]), () => {
+let buf =new Buffer.alloc(4);
+client.connect(Number(port), () => {
     setInterval(() => {
-        let num = Math.floor(Math.random() * 10).toString()
-        client.write(num)
+        client.write((buf.writeInt32LE(Math.random() * 10,0), buf))
     }, 1000).unref()
 })
 client.on('data', (data) => {console.log(`${data}`)})
