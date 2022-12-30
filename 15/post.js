@@ -1,37 +1,30 @@
-const URL = require("url");
-WriteToJson = (r, res) => {
-    res.writeHead(200, {'Content-Type': 'application/json'});
-    res.end(JSON.stringify(r));
-}
-WriteError = (err, res) => {
-    res.writeHead(500, {'Content-Type': 'application/json'});
-    res.end(JSON.stringify(err));
-}
+const {WriteToJson} = require('./SqlService');
+const {WriteError} = require('./SqlService');
 
-exports.PostHandler = (url, req, res,faculty,pulpit,client) =>
+exports.PostHandler = (url, req, res, faculty, pulpit, client) =>
 {
-    let pathParts = url.split('/');
-    const parsedUrl = URL.parse(url);
     let body = '';
     switch (true) {
         case url === '/api/faculties':
-            req.on('data', chunk => {body += chunk.toString();});
+            req.on('data', chunk => { body += chunk.toString();});
             req.on('end', () => {
                 let facultyToInsert = JSON.parse(body);
-                faculty.insertOne(facultyToInsert).then(r =>WriteToJson(facultyToInsert, res))
-                .catch(err => {WriteError(err, res);});
+                faculty.insertOne(facultyToInsert)
+                .then(r =>WriteToJson(facultyToInsert, res))
+                .catch(err => {res.end("This faculty exists"); WriteError(err, res);});
             });
             break;
-        case url === '/api/pulpits':
+        case url === '/api/pulpits' :
             req.on('data', chunk => {body += chunk.toString();} );
             req.on('end', () => {
                 let pulpitToInsert = JSON.parse(body);
-                pulpit.insertOne(pulpitToInsert).then(r => {WriteToJson(pulpitToInsert, res)})
-                .catch(err => {WriteError(err, res);});
+                pulpit.insertOne(pulpitToInsert)
+                .then(r => {WriteToJson(pulpitToInsert, res);})
+                .catch(err => {res.end("This pulpit exists"); WriteError(err, res);});
             });
             break;
-        case  url ===  "/transaction":
-            req.on('data', chunk => {body += chunk.toString();});
+        case  url === "/transaction":
+            req.on('data', chunk => {body += chunk.toString(); });
             req.on('end', async () => {
                 let PulpitsToInsert = JSON.parse(body);
                 let session = client.startSession();
@@ -55,5 +48,5 @@ exports.PostHandler = (url, req, res,faculty,pulpit,client) =>
         default:
             res.writeHead(404, {'Content-Type': 'text/plain'});
             res.end('Not found');
-    }
-}
+        }
+};

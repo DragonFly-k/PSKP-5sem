@@ -14,15 +14,13 @@ http.createServer((req, res) => {
         req.on("data", (data) => {body += data;});
         req.on("end", () => {
           body = JSON.parse(body);
-          graphql(schema,body.query,resolver,database,body.variables ? body.variables : {})
+          graphql(schema,body.query,resolver,database,body.variables ? body.variables : {})  
             .then((body) => {
               res.writeHead(200, {"Content-type": "application/json; charset=utf-8",});
               res.end(JSON.stringify(body));
-            })
-            .catch((err) => {error_handler(err,req,res)});
+            }).catch((err) => {error_handler(err,req,res)});
         });
         break;
-
       default:error_handler(req, res, 1); break;
     }
 }).listen(PORT, () => {console.log(`Server is running on port ${PORT}`);});

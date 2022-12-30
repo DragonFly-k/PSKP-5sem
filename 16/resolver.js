@@ -1,5 +1,5 @@
 const resolver = {
-  getFaculties: (args, context) => {
+  getFaculties: (args, context) => {  
     return args.FACULTY? context.getOneRecord("FACULTY", args.FACULTY): context.getFullTable("FACULTY");
   },
   getTeachers: (args, context) => {
@@ -12,7 +12,7 @@ const resolver = {
     return args.SUBJECT? context.getOneRecord("SUBJECT", args.SUBJECT): context.getFullTable("SUBJECT");
   },
   setFaculty: async (args, context) => {
-    return ((await context.updateOneRecord("FACULTY", args)) ??(await context.insertOneRecord("FACULTY", args)));
+    return ((await context.updateOneRecord("FACULTY", args)) ??(await context.insertOneRecord("FACULTY", args))); 
   },
   setTeacher: async (args, context) => {
     return ((await context.updateOneRecord("TEACHER", args)) ??(await context.insertOneRecord("TEACHER", args)));
